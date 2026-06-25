@@ -1260,143 +1260,143 @@ where
           apply toCNF.Cache.IsExtensionBy_join h this
           simp [mark, fullMark]
 
-        match hite : toCNF.detectIte upper h with
-        | some ⟨cond, ifTrue, ifFalse⟩ =>
-          have hltc := toCNF.detectIte_cond_lt hite
-          have hltt := toCNF.detectIte_ifTrue_lt hite
-          have hltf := toCNF.detectIte_ifFalse_lt hite
+        -- match hite : toCNF.detectIte upper h with
+        -- | some ⟨cond, ifTrue, ifFalse⟩ =>
+        --   have hltc := toCNF.detectIte_cond_lt hite
+        --   have hltt := toCNF.detectIte_ifTrue_lt hite
+        --   have hltf := toCNF.detectIte_ifFalse_lt hite
 
-          let ⟨cstate, hcstate⟩ := go aig cond.gate .top (by omega) state
-          let ⟨tstate, htstate⟩ := go aig ifTrue.gate (mark.invert ifTrue.invert) (by omega) cstate
-          let ⟨fstate, hfstate⟩ := go aig ifFalse.gate (mark.invert ifFalse.invert) (by omega) tstate
+        --   let ⟨cstate, hcstate⟩ := go aig cond.gate .top (by omega) state
+        --   let ⟨tstate, htstate⟩ := go aig ifTrue.gate (mark.invert ifTrue.invert) (by omega) cstate
+        --   let ⟨fstate, hfstate⟩ := go aig ifFalse.gate (mark.invert ifFalse.invert) (by omega) tstate
 
-          have hcstate' : state.IsExtensionBy fstate cond.gate .top (by omega) := by
-            apply toCNF.State.IsExtensionBy_trans_left (h23 := hfstate)
-            apply toCNF.State.IsExtensionBy_trans_left (h23 := htstate)
-            · exact hcstate
+        --   have hcstate' : state.IsExtensionBy fstate cond.gate .top (by omega) := by
+        --     apply toCNF.State.IsExtensionBy_trans_left (h23 := hfstate)
+        --     apply toCNF.State.IsExtensionBy_trans_left (h23 := htstate)
+        --     · exact hcstate
 
-          have htstate' : cstate.IsExtensionBy fstate ifTrue.gate (mark.invert ifTrue.invert) (by omega) := by
-            apply toCNF.State.IsExtensionBy_trans_left (h23 := hfstate)
-            · exact htstate
+        --   have htstate' : cstate.IsExtensionBy fstate ifTrue.gate (mark.invert ifTrue.invert) (by omega) := by
+        --     apply toCNF.State.IsExtensionBy_trans_left (h23 := hfstate)
+        --     · exact htstate
 
-          let ⟨posstate, hposstate⟩ : { out // fstate.IsExtensionBy out upper (mark.meet .uninverted) h } :=
-            if hmark : mark.has false then
-              let res :=
-                fstate.addItePos upper h hltc hltt hltf
-                  (toCNF.BiMark.top_le.mp hcstate'.trueAt)
-                  (by apply toCNF.BiMark.has_of_le htstate'.trueAt; simp [hmark])
-                  (by apply toCNF.BiMark.has_of_le hfstate.trueAt; simp [hmark])
-                  (by simp [toCNF.denote_detectIte hite])
-              ⟨res.val, toCNF.State.IsExtensionBy_le res.property (by simp)⟩
-            else
-              ⟨fstate, by
-                apply toCNF.State.IsExtensionBy_rfl
-                · assumption
-                · simp at hmark
-                  simp [toCNF.BiMark.le_iff, hmark]
-                · simpa [fstate.cache.hmarks]
-              ⟩
+        --   let ⟨posstate, hposstate⟩ : { out // fstate.IsExtensionBy out upper (mark.meet .uninverted) h } :=
+        --     if hmark : mark.has false then
+        --       let res :=
+        --         fstate.addItePos upper h hltc hltt hltf
+        --           (toCNF.BiMark.top_le.mp hcstate'.trueAt)
+        --           (by apply toCNF.BiMark.has_of_le htstate'.trueAt; simp [hmark])
+        --           (by apply toCNF.BiMark.has_of_le hfstate.trueAt; simp [hmark])
+        --           (by simp [toCNF.denote_detectIte hite])
+        --       ⟨res.val, toCNF.State.IsExtensionBy_le res.property (by simp)⟩
+        --     else
+        --       ⟨fstate, by
+        --         apply toCNF.State.IsExtensionBy_rfl
+        --         · assumption
+        --         · simp at hmark
+        --           simp [toCNF.BiMark.le_iff, hmark]
+        --         · simpa [fstate.cache.hmarks]
+        --       ⟩
 
-          have hcstate'' : state.IsExtensionBy posstate cond.gate .top (by omega) := by
-            apply toCNF.State.IsExtensionBy_trans_left (h23 := hposstate)
-            · exact hcstate'
+        --   have hcstate'' : state.IsExtensionBy posstate cond.gate .top (by omega) := by
+        --     apply toCNF.State.IsExtensionBy_trans_left (h23 := hposstate)
+        --     · exact hcstate'
 
-          have htstate'' : cstate.IsExtensionBy posstate ifTrue.gate (mark.invert ifTrue.invert) (by omega) := by
-            apply toCNF.State.IsExtensionBy_trans_left (h23 := hposstate)
-            · exact htstate'
+        --   have htstate'' : cstate.IsExtensionBy posstate ifTrue.gate (mark.invert ifTrue.invert) (by omega) := by
+        --     apply toCNF.State.IsExtensionBy_trans_left (h23 := hposstate)
+        --     · exact htstate'
 
-          have hfstate'' : tstate.IsExtensionBy posstate ifFalse.gate (mark.invert ifFalse.invert) (by omega) := by
-            apply toCNF.State.IsExtensionBy_trans_left (h23 := hposstate)
-            · exact hfstate
+        --   have hfstate'' : tstate.IsExtensionBy posstate ifFalse.gate (mark.invert ifFalse.invert) (by omega) := by
+        --     apply toCNF.State.IsExtensionBy_trans_left (h23 := hposstate)
+        --     · exact hfstate
 
-          let ⟨negstate, hnegstate⟩ : { out // posstate.IsExtensionBy out upper (mark.meet .inverted) h } :=
-            if hmark : mark.has true then
-              let res :=
-                posstate.addIteNeg upper h hltc hltt hltf
-                  (toCNF.BiMark.top_le.mp hcstate''.trueAt)
-                  (by apply toCNF.BiMark.has_of_le htstate''.trueAt; simp [hmark])
-                  (by apply toCNF.BiMark.has_of_le hfstate''.trueAt; simp [hmark])
-                  (by simp [toCNF.denote_detectIte hite])
-              ⟨res.val, toCNF.State.IsExtensionBy_le res.property (by simp)⟩
-            else
-              ⟨posstate, by
-                apply toCNF.State.IsExtensionBy_rfl
-                · assumption
-                · simp at hmark
-                  simp [toCNF.BiMark.le_iff, hmark]
-                · simpa [posstate.cache.hmarks]
-              ⟩
+        --   let ⟨negstate, hnegstate⟩ : { out // posstate.IsExtensionBy out upper (mark.meet .inverted) h } :=
+        --     if hmark : mark.has true then
+        --       let res :=
+        --         posstate.addIteNeg upper h hltc hltt hltf
+        --           (toCNF.BiMark.top_le.mp hcstate''.trueAt)
+        --           (by apply toCNF.BiMark.has_of_le htstate''.trueAt; simp [hmark])
+        --           (by apply toCNF.BiMark.has_of_le hfstate''.trueAt; simp [hmark])
+        --           (by simp [toCNF.denote_detectIte hite])
+        --       ⟨res.val, toCNF.State.IsExtensionBy_le res.property (by simp)⟩
+        --     else
+        --       ⟨posstate, by
+        --         apply toCNF.State.IsExtensionBy_rfl
+        --         · assumption
+        --         · simp at hmark
+        --           simp [toCNF.BiMark.le_iff, hmark]
+        --         · simpa [posstate.cache.hmarks]
+        --       ⟩
 
-          have hposstate' : fstate.IsExtensionBy negstate upper (mark.meet .uninverted) (by omega) := by
+        --   have hposstate' : fstate.IsExtensionBy negstate upper (mark.meet .uninverted) (by omega) := by
+        --     apply toCNF.State.IsExtensionBy_trans_left (h23 := hnegstate)
+        --     · exact hposstate
+
+        --   have hmarkstate : fstate.IsExtensionBy negstate upper mark (by omega) := by
+        --     rw [show mark = (mark.meet .uninverted).join (mark.meet .inverted) by simp [toCNF.BiMark.ext_iff]]
+        --     apply toCNF.State.IsExtensionBy_join hposstate' ?_ (toCNF.BiMark.le_rfl)
+        --     apply toCNF.State.IsExtensionBy_trans_right (h12 := hposstate) (h23 := hnegstate)
+
+        --   ⟨negstate, hmarkmeet <| toCNF.State.IsExtensionBy_trans_right (h12 := hcstate') (h23 := hmarkstate)⟩
+        -- | none =>
+        have := aig.hdag h heq
+        let ⟨lstate, hlstate⟩ := go aig lhs.gate (mark.invert lhs.invert) (by omega) state
+        let ⟨rstate, hrstate⟩ := go aig rhs.gate (mark.invert rhs.invert) (by omega) lstate
+
+        have hlstate' : state.IsExtensionBy rstate lhs.gate (mark.invert lhs.invert) (by omega) := by
+          apply toCNF.State.IsExtensionBy_trans_left
+          · exact hlstate
+          · exact hrstate
+
+        let ⟨posstate, hposstate⟩ : { out // rstate.IsExtensionBy out upper (mark.meet .uninverted) h } :=
+          if hmark : mark.has false then
+            let res :=
+              rstate.addGatePos upper h heq
+                (by apply toCNF.BiMark.has_of_le hlstate'.trueAt; simp [hmark])
+                (by apply toCNF.BiMark.has_of_le hrstate.trueAt; simp [hmark])
+            ⟨res.val, toCNF.State.IsExtensionBy_le res.property (by simp)⟩
+          else
+            ⟨rstate, by
+              apply toCNF.State.IsExtensionBy_rfl
+              · assumption
+              · simp at hmark
+                simp [toCNF.BiMark.le_iff, hmark]
+              · simpa [rstate.cache.hmarks]
+            ⟩
+
+        have hlstate'' : state.IsExtensionBy posstate lhs.gate (mark.invert lhs.invert) (by omega) := by
+          apply toCNF.State.IsExtensionBy_trans_left (h23 := hposstate)
+          · exact hlstate'
+
+        have hrstate'' : lstate.IsExtensionBy posstate rhs.gate (mark.invert rhs.invert) (by omega) := by
+          apply toCNF.State.IsExtensionBy_trans_left (h23 := hposstate)
+          · exact hrstate
+
+        let ⟨negstate, hnegstate⟩ : { out // posstate.IsExtensionBy out upper (mark.meet .inverted) h } :=
+          if hmark : mark.has true then
+            let res :=
+              posstate.addGateNeg upper h heq
+                (by apply toCNF.BiMark.has_of_le hlstate''.trueAt; simp [hmark])
+                (by apply toCNF.BiMark.has_of_le hrstate''.trueAt; simp [hmark])
+            ⟨res.val, toCNF.State.IsExtensionBy_le res.property (by simp)⟩
+          else
+            ⟨posstate, by
+              apply toCNF.State.IsExtensionBy_rfl
+              · assumption
+              · simp at hmark
+                simp [toCNF.BiMark.le_iff, hmark]
+              · simpa [posstate.cache.hmarks]
+            ⟩
+
+          have hposstate' : rstate.IsExtensionBy negstate upper (mark.meet .uninverted) (by omega) := by
             apply toCNF.State.IsExtensionBy_trans_left (h23 := hnegstate)
             · exact hposstate
 
-          have hmarkstate : fstate.IsExtensionBy negstate upper mark (by omega) := by
+          have hmarkstate : rstate.IsExtensionBy negstate upper mark (by omega) := by
             rw [show mark = (mark.meet .uninverted).join (mark.meet .inverted) by simp [toCNF.BiMark.ext_iff]]
             apply toCNF.State.IsExtensionBy_join hposstate' ?_ (toCNF.BiMark.le_rfl)
             apply toCNF.State.IsExtensionBy_trans_right (h12 := hposstate) (h23 := hnegstate)
 
-          ⟨negstate, hmarkmeet <| toCNF.State.IsExtensionBy_trans_right (h12 := hcstate') (h23 := hmarkstate)⟩
-        | none =>
-          have := aig.hdag h heq
-          let ⟨lstate, hlstate⟩ := go aig lhs.gate (mark.invert lhs.invert) (by omega) state
-          let ⟨rstate, hrstate⟩ := go aig rhs.gate (mark.invert rhs.invert) (by omega) lstate
-
-          have hlstate' : state.IsExtensionBy rstate lhs.gate (mark.invert lhs.invert) (by omega) := by
-            apply toCNF.State.IsExtensionBy_trans_left
-            · exact hlstate
-            · exact hrstate
-
-          let ⟨posstate, hposstate⟩ : { out // rstate.IsExtensionBy out upper (mark.meet .uninverted) h } :=
-            if hmark : mark.has false then
-              let res :=
-                rstate.addGatePos upper h heq
-                  (by apply toCNF.BiMark.has_of_le hlstate'.trueAt; simp [hmark])
-                  (by apply toCNF.BiMark.has_of_le hrstate.trueAt; simp [hmark])
-              ⟨res.val, toCNF.State.IsExtensionBy_le res.property (by simp)⟩
-            else
-              ⟨rstate, by
-                apply toCNF.State.IsExtensionBy_rfl
-                · assumption
-                · simp at hmark
-                  simp [toCNF.BiMark.le_iff, hmark]
-                · simpa [rstate.cache.hmarks]
-              ⟩
-
-          have hlstate'' : state.IsExtensionBy posstate lhs.gate (mark.invert lhs.invert) (by omega) := by
-            apply toCNF.State.IsExtensionBy_trans_left (h23 := hposstate)
-            · exact hlstate'
-
-          have hrstate'' : lstate.IsExtensionBy posstate rhs.gate (mark.invert rhs.invert) (by omega) := by
-            apply toCNF.State.IsExtensionBy_trans_left (h23 := hposstate)
-            · exact hrstate
-
-          let ⟨negstate, hnegstate⟩ : { out // posstate.IsExtensionBy out upper (mark.meet .inverted) h } :=
-            if hmark : mark.has true then
-              let res :=
-                posstate.addGateNeg upper h heq
-                  (by apply toCNF.BiMark.has_of_le hlstate''.trueAt; simp [hmark])
-                  (by apply toCNF.BiMark.has_of_le hrstate''.trueAt; simp [hmark])
-              ⟨res.val, toCNF.State.IsExtensionBy_le res.property (by simp)⟩
-            else
-              ⟨posstate, by
-                apply toCNF.State.IsExtensionBy_rfl
-                · assumption
-                · simp at hmark
-                  simp [toCNF.BiMark.le_iff, hmark]
-                · simpa [posstate.cache.hmarks]
-              ⟩
-
-            have hposstate' : rstate.IsExtensionBy negstate upper (mark.meet .uninverted) (by omega) := by
-              apply toCNF.State.IsExtensionBy_trans_left (h23 := hnegstate)
-              · exact hposstate
-
-            have hmarkstate : rstate.IsExtensionBy negstate upper mark (by omega) := by
-              rw [show mark = (mark.meet .uninverted).join (mark.meet .inverted) by simp [toCNF.BiMark.ext_iff]]
-              apply toCNF.State.IsExtensionBy_join hposstate' ?_ (toCNF.BiMark.le_rfl)
-              apply toCNF.State.IsExtensionBy_trans_right (h12 := hposstate) (h23 := hnegstate)
-
-            ⟨negstate, hmarkmeet <| toCNF.State.IsExtensionBy_trans_right (h12 := hlstate') (h23 := hmarkstate)⟩
+          ⟨negstate, hmarkmeet <| toCNF.State.IsExtensionBy_trans_right (h12 := hlstate') (h23 := hmarkstate)⟩
   termination_by upper
   decreasing_by all_goals omega
 
