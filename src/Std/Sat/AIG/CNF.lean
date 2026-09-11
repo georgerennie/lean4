@@ -793,6 +793,7 @@ where
       | .false => state.addFalse upper h heq
       | .atom _ => state.addAtom upper h heq
       | .gate lhs rhs =>
+        /-
         match hite : toCNF.detectIte upper h with
         | some ⟨cond, ifTrue, ifFalse⟩ =>
           have hltc := toCNF.detectIte_cond_lt hite
@@ -816,6 +817,7 @@ where
             (by simp [toCNF.denote_detectIte hite])
           ⟨ret, toCNF.State.IsExtensionBy_trans_right (h12 := hcstate') (h23 := hretstate)⟩
         | none =>
+        -/
           have := aig.hdag h heq
           let ⟨lstate, hlstate⟩ := go aig lhs.gate (by omega) state
           let ⟨rstate, hrstate⟩ := go aig rhs.gate (by omega) lstate
